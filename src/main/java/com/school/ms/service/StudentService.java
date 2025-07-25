@@ -15,4 +15,5 @@ public interface StudentService {
     public void deleteStudent(Long id);
     StudentDTO updateStudent(Long id, StudentDTO studentDTO);
     StudentWithEnrollmentsDTO getStudentWithEnrollments(Long id);
+    public Double calculateGPA(Long studentId);
 }

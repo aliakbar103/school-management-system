@@ -3,6 +3,7 @@ package com.school.ms.service.impl;
 import com.school.ms.dto.CourseDTO;
 import com.school.ms.dto.StudentDTO;
 import com.school.ms.dto.StudentWithEnrollmentsDTO;
+import com.school.ms.entities.Course;
 import com.school.ms.entities.Enrollment;
 import com.school.ms.entities.Student;
 import com.school.ms.mapper.CourseMapper;
@@ -81,5 +82,40 @@ public class StudentServiceImpl implements StudentService {
         return StudentMapper.entityToDto(updatedStudent);
     }
 
+
+    @Override
+    public Double calculateGPA(Long studentId) {
+        List<Enrollment> enrollments = enrollmentRepository.findByStudentId(studentId);
+
+        if (enrollments == null || enrollments.isEmpty()) {
+            throw new RuntimeException("No enrollments found for student ID: " + studentId);
+        }
+
+        double totalGpa = 0.0;
+        int count = 0;
+
+        for (Enrollment enrollment : enrollments) {
+            Double marks = enrollment.getMarks();
+            if (marks != null) {
+                totalGpa += convertMarksToGpa(marks);
+                count++;
+            }
+        }
+
+        if (count == 0) {
+            throw new RuntimeException("No valid marks found for student ID: " + studentId);
+        }
+
+        return totalGpa / count;
+    }
+
+    private double convertMarksToGpa(Double marks) {
+        if (marks >= 90) return 4.0;
+        else if (marks >= 80) return 3.5;
+        else if (marks >= 70) return 3.0;
+        else if (marks >= 60) return 2.5;
+        else if (marks >= 50) return 2.0;
+        else return 0.0;
+    }
 }
 

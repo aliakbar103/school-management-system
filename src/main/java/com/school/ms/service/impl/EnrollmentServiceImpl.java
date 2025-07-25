@@ -98,37 +98,23 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         return EnrollmentMapper.entityToDto(saved);
     }
 
+
     // Record grade for an enrolled course
     @Transactional
-    public String recordGrade(Long studentId, Long courseId, String grade,Double marks) {
+    @Override
+    public Enrollment recordGrade(EnrollmentDTO enrollmentDTO) {
         Enrollment enrollment = enrollmentRepository
-                .findByStudentIdAndCourseId(studentId, courseId)
+                .findByStudentIdAndCourseId(enrollmentDTO.getStudentId(), enrollmentDTO.getCourseId())
                 .orElse(null);
 
         if (enrollment == null) {
-            return "Student is not enrolled in the course.";
+            throw new RuntimeException( "Student is not enrolled in the course.");
         }
 
-        enrollment.setGrade(grade);
-        enrollment.setMarks(marks);
-        enrollmentRepository.save(enrollment);
-        return "Grade recorded successfully.";
-    }
+        enrollment.setGrade(enrollmentDTO.getGrade());
+        enrollment.setMarks(enrollmentDTO.getMarks());
+        return enrollmentRepository.save(enrollment);
 
-    // Calculate GPA for a student
-    public double calculateGPA(Long studentId) {
-        List<Enrollment> enrollments = enrollmentRepository.findByStudentId(studentId);
-        double total = 0;
-        int count = 0;
-
-        for (Enrollment e : enrollments) {
-            if (e.getMarks() != null) {
-                total += e.getMarks();
-                count++;
-            }
-        }
-
-        return count == 0 ? 0.0 : total / count;
     }
 
 

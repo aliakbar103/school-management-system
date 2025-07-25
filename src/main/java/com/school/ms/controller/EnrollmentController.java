@@ -2,6 +2,7 @@ package com.school.ms.controller;
 
 import com.school.ms.dto.EnrollmentDTO;
 import com.school.ms.dto.EnrollmentResponseDTO;
+import com.school.ms.mapper.EnrollmentMapper;
 import com.school.ms.service.EnrollmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -49,6 +50,19 @@ public class EnrollmentController {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body("Enrollment failed: " + ex.getMessage());
+        }
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<?> updateEnrollment(@RequestBody EnrollmentDTO enrollmentDTO) {
+        try {
+            EnrollmentDTO updatedEnrollment = EnrollmentMapper.entityToDto(enrollmentService.recordGrade(enrollmentDTO));
+            return ResponseEntity.ok(updatedEnrollment);
+        } catch (RuntimeException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An error occurred while updating enrollment.");
         }
     }
 

@@ -21,6 +21,10 @@ GET /api/students
 🔍 Get Student By ID
 GET /api/students/{id}
 
+🔍 Get Student By ID With Its Enrolled Courses
+GET /api/students/{id}/with-enrollments
+
+
 ✏️ Update Student
 PUT /api/students/{id}
 
@@ -31,6 +35,8 @@ Request Body:
   "email": "aliakbar@example.com",
   "dob": "2000-01-01"
 }
+
+
 ❌ Delete Student
 DELETE /api/students/{id}
 

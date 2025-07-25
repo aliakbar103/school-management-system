@@ -5,11 +5,15 @@ import com.school.ms.dto.StudentWithEnrollmentsDTO;
 import com.school.ms.mapper.StudentMapper;
 import com.school.ms.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/students")
@@ -56,5 +60,28 @@ public class StudentController {
     public ResponseEntity<Void> deleteStudent(@PathVariable Long id) {
         studentService.deleteStudent(id);
         return ResponseEntity.noContent().build(); // 204 No Content
+    }
+
+    @GetMapping("/{id}/gpa")
+    public ResponseEntity<?> getStudentGpa(@PathVariable Long id) {
+        try {
+            Double gpa = studentService.calculateGPA(id);
+
+            Map<String, Object> response = new LinkedHashMap<>();
+            response.put("studentId", id);
+            response.put("gpa", gpa);
+
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException ex) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", "Not Found");
+            error.put("message", ex.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        } catch (Exception ex) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", "Internal Server Error");
+            error.put("message", "Something went wrong: " + ex.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        }
     }
 }
