@@ -52,7 +52,7 @@ Sample Response:
 GET /api/enrollments/{id}
 
 ✏️ Update Enrollment
-PUT /api/enrollments/{id}
+PUT /api/enrollments/update
 
 Request Body:
 {
